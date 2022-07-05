@@ -113,6 +113,48 @@ videoRouter.get('/:id', async (req: Request, res: Response) => {
     if (!validateGUID(req.params.id)) throw new InvalidRequestError('The query parameter \'id\' is not a valid GUID');
 
     const video = await videoController.get(Guid.parse(req.params.id));
+
+    return res.status(200).send({
+      _id: video.getId(),
+      file_extension: video.getFileExtension(),
+      recordingStartedTime: video.getRecordingStartedTime(),
+      recordingEndedTime: video.getRecordingEndedTime(),
+    })
+  } catch (error) {
+    if (error instanceof InvalidRequestError || error instanceof SemanticError) { 
+      logger.logToBoth(
+        `VideoRoutes GET (/) - Invalid request: ${error.message}`,
+        LogLevel.INFO,
+        error.stack
+      );
+
+      return res.status(400).send('Request failed: ' + error.message);
+    } else if (error instanceof Error) { 
+      logger.logToBoth(
+        `VideoRoutes GET (/) - Internal server error: ${error.message}`,
+        LogLevel.ERROR,
+        error.stack
+      );
+    }
+    
+    return res.sendStatus(500);
+  }
+});
+
+
+/**
+ * Get a video by id. The request expects a query parameter with the key id.
+ * The id must be a valid GUID.
+ * 
+ * The request returns a buffer containing the video file data.
+ */
+videoRouter.get('/:id/download', async (req: Request, res: Response) => {
+  try {
+    if (!req.params.id) throw new InvalidRequestError('The request did not contain the query parameter \'id\'');
+    if (!(typeof req.params.id === "string")) throw new InvalidRequestError('The query parameter \'id\' must be a string');
+    if (!validateGUID(req.params.id)) throw new InvalidRequestError('The query parameter \'id\' is not a valid GUID');
+
+    const video = await videoController.get(Guid.parse(req.params.id));
     const formData = new FormData();
 
     formData.append('videoFile', video.getDataBuffer());
