@@ -93,6 +93,15 @@ userRouter.post('/connect', async (req: Request, res: Response) => {
   
     const saveResult = await userController.create(user);
     if (!saveResult) throw new Error('Failed to save user');
+
+    const socketService: SocketService = app.get('socketService');
+    socketService.emitToRoom(
+      'user-connected',
+      {
+
+      },
+      'admin'
+    );
   
     return res.status(201).send({
       userId: user.getId()
@@ -133,6 +142,15 @@ userRouter.post('/:user_id/disconnect', async (req: Request, res: Response) => {
     const updateResult = await userController.update(user.getId(), user);
 
     if (!updateResult) throw new Error('Failed to update user');
+
+    const socketService: SocketService = app.get('socketService');
+    socketService.emitToRoom(
+      'user-disconnected',
+      {
+
+      },
+      'admin'
+    );
   
     return res.status(200).send({
       userId: user.getId(),
@@ -453,6 +471,50 @@ userRouter.delete('/:user_id', async (req: Request, res: Response) => {
     } else if (error instanceof Error) {
       logger.logToBoth(
         `UserRoutes DELETE (/:user_id) - Internal server error: ${error.message}`,
+        LogLevel.ERROR,
+        error.stack
+      );
+    }
+
+    return res.status(500).send();
+  }
+});
+
+userRouter.post('/disconnect-inactive-users', async (req: Request, res: Response) => { 
+  try {
+    const INACTIVE_USER_TIMEOUT = 20 * 60 * 1000; // 20 minutes
+    const allUsers = await userController.getAll();
+    const inactiveUsers = allUsers.filter(user => user.getConnectedTime() < Date.now() - INACTIVE_USER_TIMEOUT);
+
+    for (const user of inactiveUsers) { 
+      user.setDisconnectedTime(+(new Date()));
+      const userUpdated = await userController.update(user.getId(), user);
+
+      if (!userUpdated) throw new Error('Failed to update user');
+    }
+
+    const socketService: SocketService = app.get('socketService');
+    socketService.emitToRoom(
+      'user-disconnected',
+      {
+
+      },
+      'admin'
+    );
+
+    return res.sendStatus(200);
+  } catch (error) {
+    if (error instanceof InvalidRequestError) {
+      logger.logToBoth(
+        `UserRoutes POST (/disconnect-inactive-users) - Invalid request: ${error.message}`,
+        LogLevel.INFO,
+        error.stack
+      );
+
+      return res.status(400).send('Request failed: ' + error.message);
+    } else if (error instanceof Error) {
+      logger.logToBoth(
+        `UserRoutes POST (/disconnect-inactive-users) - Internal server error: ${error.message}`,
         LogLevel.ERROR,
         error.stack
       );
