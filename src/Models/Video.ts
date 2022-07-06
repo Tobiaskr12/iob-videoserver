@@ -5,12 +5,12 @@ import validateGUID from '../Common/Util/GUIDValidator';
 import DeserializationError from '../Errors/DeserializationError';
 
 export interface IVideoFactory {
-  create(data: Buffer, file_extension: 'mp4', recordingStartedTime: number, recordingEndedTime: number, id?: string): Video
+  create(data: Buffer, file_extension: 'webm', recordingStartedTime: number, recordingEndedTime: number, id?: string): Video
 }
 
 @injectable()
 export class VideoFactory implements IVideoFactory {
-  public create = (data: Buffer, file_extension: 'mp4', recordingStartedTime: number, recordingEndedTime: number,  id?: string): Video => {
+  public create = (data: Buffer, file_extension: 'webm', recordingStartedTime: number, recordingEndedTime: number,  id?: string): Video => {
     return new Video(file_extension, data, recordingStartedTime, recordingEndedTime, id);
   }
 } 
@@ -24,11 +24,11 @@ export class VideoFactory implements IVideoFactory {
 export default class Video implements Savable {
   private _id: string;
   private dataBuffer: Buffer;
-  private file_extension: 'mp4';
+  private file_extension: 'webm';
   private recordingStartedTime: number;
   private recordingEndedTime: number;
   
-  constructor(file_extension: 'mp4', dataBuffer: Buffer, recordingStartedTime: number, recordingEndedTime: number, id?: string) { 
+  constructor(file_extension: 'webm', dataBuffer: Buffer, recordingStartedTime: number, recordingEndedTime: number, id?: string) { 
     if (id && validateGUID(id)) {
       this._id = id
     } else {

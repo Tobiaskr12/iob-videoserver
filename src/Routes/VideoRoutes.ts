@@ -17,7 +17,7 @@ const videoController: IController<Video, Guid> = container.resolve('VideoContro
 
 /**
  * Upload a video. The request expects a form-data object with the following keys:
- * - videoFile: The .mp4 or .mov video file
+ * - videoFile: The .webm or .mov video file
  * - file_extension: The file extension of the video file
  * - recordingStartedTime: The epoch time the video recording started
  * - recordingEndedTime: The epoch time the video recording ended
@@ -29,7 +29,7 @@ videoRouter.post('/', async (req: Request, res: Response) => {
     if (!req.files) throw new InvalidRequestError('The request did not contain a files key');
     if (Array.isArray(req.files.videoFile)) throw new InvalidRequestError('The request contained multiple files');
     if (!req.body.file_extension) throw new InvalidRequestError('The request did not contain a file_format key in the body');
-    if (!(req.body.file_extension === 'mp4')) throw new InvalidRequestError('The provided video file format is not supported');
+    if (!(req.body.file_extension === 'webm')) throw new InvalidRequestError('The provided video file format is not supported');
     if (!req.body.recordingStartedTime) throw new InvalidRequestError('The request did not contain a recordingStartedTime key in the body');
     if (!req.body.recordingEndedTime) throw new InvalidRequestError('The request did not contain a recordingEndedTime key in the body');
 
