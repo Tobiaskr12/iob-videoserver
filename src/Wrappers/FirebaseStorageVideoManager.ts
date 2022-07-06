@@ -125,7 +125,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
       const fileExtension = fileName.split('.')[1];
       const bucketFile = this.bucket.file(fileName);
       
-      if (fileExtension != 'webm') throw new Error('The video file is not in the correct format');
+      if (fileExtension != 'mp4') throw new Error('The video file is not in the correct format');
       
       const videoData = Video.deserialize(
         await this.databaseManager.get(fileNameWithoutExtension, DBCollections.VIDEOS)
@@ -173,7 +173,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     if (!bucketFiles) throw new Error('The bucket could not be retrieved');
     
 
-    for (let extension of ['webm']) {
+    for (let extension of ['mp4']) {
       if (!resultFile) {
         resultFile = bucketFiles[0].find((file) => file.metadata.name === `${id}.${extension}`);
       }

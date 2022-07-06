@@ -29,7 +29,7 @@ videoRouter.post('/', async (req: Request, res: Response) => {
     if (!req.files) throw new InvalidRequestError('The request did not contain a files key');
     if (Array.isArray(req.files.videoFile)) throw new InvalidRequestError('The request contained multiple files');
     if (!req.body.file_extension) throw new InvalidRequestError('The request did not contain a file_format key in the body');
-    if (!(req.body.file_extension === 'webm')) throw new InvalidRequestError('The provided video file format is not supported');
+    if (!(req.body.file_extension === 'mp4')) throw new InvalidRequestError('The provided video file format is not supported');
     if (!req.body.recordingStartedTime) throw new InvalidRequestError('The request did not contain a recordingStartedTime key in the body');
     if (!req.body.recordingEndedTime) throw new InvalidRequestError('The request did not contain a recordingEndedTime key in the body');
 
