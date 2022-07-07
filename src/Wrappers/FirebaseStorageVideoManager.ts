@@ -23,12 +23,12 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
 
   public async upload(video: Video): Promise<boolean> { 
     const id = video.getId();
-    fs.writeFileSync(`${id}.${video.getFileExtension()}`, video.getDataBuffer());
+    fs.writeFileSync(`${id}}`, video.getDataBuffer());
 
-    const uploadResult = await this.bucket.upload(`${id}.${video.getFileExtension()}`);
+    const uploadResult = await this.bucket.upload(`${id}}`);
     
     if (uploadResult) {
-      fs.rmSync(`${id}.${video.getFileExtension()}`);
+      fs.rmSync(`${id}}`);
 
       return true;
     } else {
@@ -122,7 +122,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     try {
       const fileName: string = file.metadata.name;
       const fileNameWithoutExtension = fileName.split('.')[0];
-      const fileExtension = fileName.split('.')[1];
+      const fileExtension = '';
       const bucketFile = this.bucket.file(fileName);
       
       if (fileExtension != '') throw new Error('The video file is not in the correct format');
@@ -175,7 +175,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
 
     for (let extension of ['']) {
       if (!resultFile) {
-        resultFile = bucketFiles[0].find((file) => file.metadata.name === `${id}.${extension}`);
+        resultFile = bucketFiles[0].find((file) => file.metadata.name === `${id}`);
       }
     }
 
