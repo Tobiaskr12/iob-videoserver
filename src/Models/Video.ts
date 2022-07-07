@@ -70,7 +70,7 @@ export default class Video implements Savable {
   }
 
   public static deserialize(queryResult: any): Video {
-    if (queryResult && queryResult._id && queryResult.file_extension && queryResult.recordingStartedTime && queryResult.recordingEndedTime) { 
+    if (queryResult && queryResult._id && queryResult.recordingStartedTime && queryResult.recordingEndedTime) { 
       return new Video(
         queryResult.file_extension,
         Buffer.alloc(0),

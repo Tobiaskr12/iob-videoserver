@@ -56,6 +56,8 @@ videoRouter.post('/', async (req: Request, res: Response) => {
         error.stack
       );
     }
+
+    return res.sendStatus(500);
   }
   
   /**

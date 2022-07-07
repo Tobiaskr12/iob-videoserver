@@ -23,12 +23,12 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
 
   public async upload(video: Video): Promise<boolean> { 
     const id = video.getId();
-    fs.writeFileSync(`${id}}`, video.getDataBuffer());
+    fs.writeFileSync(`${id}`, video.getDataBuffer());
 
     const uploadResult = await this.bucket.upload(`${id}`);
     
     if (uploadResult) {
-      fs.rmSync(`${id}}`);
+      fs.rmSync(`${id}`);
 
       return true;
     } else {
@@ -122,15 +122,16 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     try {
       const fileName: string = file.metadata.name;
       const fileNameWithoutExtension = fileName.split('.')[0];
-      const fileExtension = '';
+      //const fileExtension = '';
       const bucketFile = this.bucket.file(fileName);
       
-      if (fileExtension != '') throw new Error('The video file is not in the correct format');
+      //if (fileExtension != '') throw new Error('The video file is not in the correct format');
       
+      console.error("****************Testo***************");
       const videoData = Video.deserialize(
         await this.databaseManager.get(fileNameWithoutExtension, DBCollections.VIDEOS)
       );
-
+        
       if (!videoData) throw new Error('An error occured while deserializing the video');
         
       if (!fs.existsSync('./downloaded')) {
@@ -145,7 +146,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
         
         const video = this.videoFactory.create(
           fs.readFileSync(`./downloaded/${fileName}`),
-          fileExtension,
+          '',
           videoData.getRecordingStartedTime(),
           videoData.getRecordingEndedTime(),
           videoData.getId()
