@@ -127,7 +127,6 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
       
       //if (fileExtension != '') throw new Error('The video file is not in the correct format');
       
-      console.error("****************Testo***************");
       const videoData = Video.deserialize(
         await this.databaseManager.get(fileNameWithoutExtension, DBCollections.VIDEOS)
       );
