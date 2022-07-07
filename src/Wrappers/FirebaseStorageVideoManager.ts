@@ -23,12 +23,12 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
 
   public async upload(video: Video): Promise<boolean> { 
     const id = video.getId();
-    fs.writeFileSync(`${id}`, video.getDataBuffer());
+    fs.writeFileSync(`${id}.${video.getFileExtension()}`, video.getDataBuffer());
 
-    const uploadResult = await this.bucket.upload(`${id}`);
+    const uploadResult = await this.bucket.upload(`${id}.${video.getFileExtension()}`);
     
     if (uploadResult) {
-      fs.rmSync(`${id}`);
+      fs.rmSync(`${id}.${video.getFileExtension()}`);
 
       return true;
     } else {
@@ -122,15 +122,15 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     try {
       const fileName: string = file.metadata.name;
       const fileNameWithoutExtension = fileName.split('.')[0];
-      //const fileExtension = '';
+      const fileExtension = fileName.split('.')[1];
       const bucketFile = this.bucket.file(fileName);
       
-      //if (fileExtension != '') throw new Error('The video file is not in the correct format');
+      if (fileExtension != 'webm') throw new Error('The video file is not in the correct format');
       
       const videoData = Video.deserialize(
         await this.databaseManager.get(fileNameWithoutExtension, DBCollections.VIDEOS)
       );
-        
+
       if (!videoData) throw new Error('An error occured while deserializing the video');
         
       if (!fs.existsSync('./downloaded')) {
@@ -145,7 +145,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
         
         const video = this.videoFactory.create(
           fs.readFileSync(`./downloaded/${fileName}`),
-          '',
+          fileExtension,
           videoData.getRecordingStartedTime(),
           videoData.getRecordingEndedTime(),
           videoData.getId()
@@ -173,9 +173,9 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     if (!bucketFiles) throw new Error('The bucket could not be retrieved');
     
 
-    for (let extension of ['']) {
+    for (let extension of ['webm']) {
       if (!resultFile) {
-        resultFile = bucketFiles[0].find((file) => file.metadata.name === `${id}`);
+        resultFile = bucketFiles[0].find((file) => file.metadata.name === `${id}.${extension}`);
       }
     }
 
