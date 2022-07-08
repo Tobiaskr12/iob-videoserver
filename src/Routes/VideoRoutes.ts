@@ -153,8 +153,9 @@ try {
 
   const video = await videoController.get(Guid.parse(req.params.id));
   const formData = new FormData();
+  const blob = new Blob([video.getDataBuffer()], { type: 'video/' + video.getFileExtension() });
 
-  formData.append('videoFile', video.getDataBuffer());
+  formData.append('videoFile', blob);
 
   res.status(200);
   res.setHeader('Content-Type', 'multipart/form-data; boundary=' + formData.getBoundary());
