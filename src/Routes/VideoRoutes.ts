@@ -26,7 +26,6 @@ const videoController: IController<Video, Guid> = container.resolve('VideoContro
  */
 videoRouter.post('/', async (req: Request, res: Response) => {
   try {
-    console.log('*****************************' + req.body.file_extension + "             ")
     if (!req.files) throw new InvalidRequestError('The request did not contain a files key');
     if (Array.isArray(req.files.videoFile)) throw new InvalidRequestError('The request contained multiple files');
     if (!(req.body.file_extension === 'webm')) throw new InvalidRequestError('The provided video file format is not supported');
