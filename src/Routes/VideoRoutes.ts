@@ -152,14 +152,10 @@ try {
   if (!validateGUID(req.params.id)) throw new InvalidRequestError('The query parameter \'id\' is not a valid GUID');
 
   const video = await videoController.get(Guid.parse(req.params.id));
-  const formData = new FormData();
-  const blob = new Blob([video.getDataBuffer()], { type: 'video/' + video.getFileExtension() });
 
-  formData.append('videoFile', blob);
-
-  res.status(200);
-  res.setHeader('Content-Type', 'multipart/form-data; boundary=' + formData.getBoundary());
-  return formData.pipe(res);
+  return res.status(200).send({
+    videoBuffer: video.getDataBuffer().toString('base64'),
+  });
 } catch (error) {
   if (error instanceof InvalidRequestError || error instanceof SemanticError) { 
     logger.logToBoth(
