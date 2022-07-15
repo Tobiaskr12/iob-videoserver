@@ -1,5 +1,4 @@
 import express, { Request, Response } from "express";
-import { Guid } from "guid-typescript";
 import { container } from "tsyringe";
 import Logger from "../Common/Logger.interface";
 import { LogLevel } from "../Common/LogLevel.enum";

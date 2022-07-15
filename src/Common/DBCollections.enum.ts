@@ -3,5 +3,6 @@ export enum DBCollections {
   EVENTS = "events",
   USERS = "users",
   LOCATIONS = "locations",
-  VIDEOS = "videos"
+  VIDEOS = "videos",
+  SURVEYS = "surveys",
 }

@@ -12,6 +12,8 @@ import UserController from "../Controllers/UserController";
 import LogController from "../Controllers/LogController";
 import LocationController from "../Controllers/LocationController";
 import EventController from "../Controllers/EventController";
+import SurveyController from './../Controllers/SurveyController';
+import { SurveyFactory } from "../Models/Survey";
 
 export const setupDI = () => {
   // Register util and wrappers
@@ -41,6 +43,9 @@ export const setupDI = () => {
   container.register("UserController", {
     useClass: UserController
   });
+  container.register("SurveyController", {
+    useClass: SurveyController
+  });
 
   // Register Factories
   container.register("VideoFactory", {
@@ -57,5 +62,8 @@ export const setupDI = () => {
   });
   container.register("UserFactory", { 
     useClass: UserFactory
+  });
+  container.register("SurveyFactory", {
+    useClass: SurveyFactory
   });
 }
