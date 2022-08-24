@@ -25,7 +25,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     const id = video.getId();
     fs.writeFileSync(`${id}.${video.getFileExtension()}`, video.getDataBuffer());
 
-    const uploadResult = await this.bucket.upload(`${id}.${video.getFileExtension()}`);
+    const uploadResult = await this.bucket.upload(`${id}_exp${video.getExperimentNumber()}.${video.getFileExtension()}`);
     
     if (uploadResult) {
       fs.rmSync(`${id}.${video.getFileExtension()}`);
@@ -148,6 +148,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
           fileExtension,
           videoData.getRecordingStartedTime(),
           videoData.getRecordingEndedTime(),
+          videoData.getExperimentNumber(),
           videoData.getId()
         );
 

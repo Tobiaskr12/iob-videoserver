@@ -31,8 +31,9 @@ videoRouter.post('/', async (req: Request, res: Response) => {
     if (!(req.body.file_extension === 'webm')) throw new InvalidRequestError('The provided video file format is not supported');
     if (!req.body.recordingStartedTime) throw new InvalidRequestError('The request did not contain a recordingStartedTime key in the body');
     if (!req.body.recordingEndedTime) throw new InvalidRequestError('The request did not contain a recordingEndedTime key in the body');
+    if (!req.body.experimentNumber) throw new InvalidRequestError('The request did not contain an experimentNumber');
 
-    const requestVideo = videoFactory.create(req.files.videoFile.data, req.body.file_extension, +req.body.recordingStartedTime, +req.body.recordingEndedTime);
+    const requestVideo = videoFactory.create(req.files.videoFile.data, req.body.file_extension, +req.body.recordingStartedTime, +req.body.recordingEndedTime, +req.body.experimentNumber);
     const isVideoUploaded = await videoController.create(requestVideo);
 
     if (isVideoUploaded) {
