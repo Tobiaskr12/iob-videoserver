@@ -4,16 +4,16 @@ import Logger from "../Common/Logger.interface";
 import { LogLevel } from "../Common/LogLevel.enum";
 import { DBCollections } from "../Common/DBCollections.enum";
 import IController from "./IController.interface";
-import Survey from "../Models/Survey";
+import TextSurvey from "../Models/Survey";
 
 @injectable()
-export default class SurveyController implements IController<Survey, string> {
+export default class TextSurveyController implements IController<TextSurvey, string> {
   constructor(
     @inject("DatabaseManager") private databaseManager: DatabaseManager,
     @inject("Logger") private logger: Logger
   ) { }
 
-  public async create(modelObject: Survey): Promise<boolean> {
+  public async create(modelObject: TextSurvey): Promise<boolean> {
     const createResult = await this.databaseManager.save(modelObject, DBCollections.SURVEYS);
 
     if (createResult) {
@@ -31,9 +31,9 @@ export default class SurveyController implements IController<Survey, string> {
     return createResult;
   }
 
-  public async get(id: string): Promise<Survey> {
+  public async get(id: string): Promise<TextSurvey> {
     try {
-      const returnSurvey = Survey.deserialize(await this.databaseManager.get(id.toString(), DBCollections.SURVEYS));
+      const returnSurvey = TextSurvey.deserialize(await this.databaseManager.get(id.toString(), DBCollections.SURVEYS));
   
       if (returnSurvey) {
         this.logger.logToBoth(
@@ -55,9 +55,9 @@ export default class SurveyController implements IController<Survey, string> {
     }
   }
 
-  public async getWithFilter(filter: any): Promise<Survey[]> {
+  public async getWithFilter(filter: any): Promise<TextSurvey[]> {
     const serializedSurveys = await this.databaseManager.getWithFilter(filter, DBCollections.SURVEYS);
-    const deserializedSurveys = serializedSurveys.map(u => Survey.deserialize(u));
+    const deserializedSurveys = serializedSurveys.map(u => TextSurvey.deserialize(u));
 
     if (deserializedSurveys) {
       this.logger.logToBoth(
@@ -74,9 +74,9 @@ export default class SurveyController implements IController<Survey, string> {
     return deserializedSurveys;
   }
 
-  public async getAll(): Promise<Survey[]> {
+  public async getAll(): Promise<TextSurvey[]> {
     const serializedSurveys = await this.databaseManager.getAll(DBCollections.SURVEYS);
-    const deserializedSurveys = serializedSurveys.map(u => Survey.deserialize(u));
+    const deserializedSurveys = serializedSurveys.map(u => TextSurvey.deserialize(u));
 
     if (deserializedSurveys) {
       this.logger.logToBoth(
@@ -93,7 +93,7 @@ export default class SurveyController implements IController<Survey, string> {
     return deserializedSurveys;
   }
 
-  public async update(oldModelObjectId: string, updatedModelObject: Survey): Promise<boolean> {
+  public async update(oldModelObjectId: string, updatedModelObject: TextSurvey): Promise<boolean> {
     const updateResult = await this.databaseManager.update(oldModelObjectId.toString(), updatedModelObject, DBCollections.SURVEYS);
 
     if (updateResult) {

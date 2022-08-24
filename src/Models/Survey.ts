@@ -4,24 +4,23 @@ import Savable from "../Common/Savable.interface";
 import validateGUID from "../Common/Util/GUIDValidator";
 import DeserializationError from "../Errors/DeserializationError";
 
-export interface ISurveyFactory {
-  create(answers: string[], userId: string, experimentId: number, id?: string): Survey;
+export interface ITextSurveyFactory {
+  create(answers: string[], userId: string, id?: string): TextSurvey;
 } 
 
 @injectable()
-export class SurveyFactory implements ISurveyFactory {
-  public create = (answers: string[], userId: string, experimentId: number, id?: string): Survey => {
-    return new Survey(answers, userId, experimentId, id);
+export class TextSurveyFactory implements ITextSurveyFactory {
+  public create = (answers: string[], userId: string, id?: string): TextSurvey => {
+    return new TextSurvey(answers, userId, id);
   }
 }
 
-export default class Survey implements Savable {
+export default class TextSurvey implements Savable {
   private _id: string;
   private answers: string[] = [];
   private userId: string;
-  private experimentId: number;
 
-  constructor(answers: string[], userId: string, experimentId: number, id?: string) {
+  constructor(answers: string[], userId: string, id?: string) {
     if (id && validateGUID(id)) {
       this._id = id
     } else {
@@ -30,7 +29,6 @@ export default class Survey implements Savable {
 
     this.answers = answers;
     this.userId = userId;
-    this.experimentId = experimentId;
   }
 
   public getId(): string {
@@ -45,24 +43,19 @@ export default class Survey implements Savable {
     return this.userId;
   }
 
-  public getExperimentId(): number {
-    return this.experimentId;
-  }
-
   public serialize(): { [key: string]: any; } {
 
     console.log("SERIALIZE: ", this.answers, this.userId, this._id);
     return {
       _id: this._id,
       answers: this.answers,
-      userId: this.userId,
-      experimentId: this.experimentId
+      userId: this.userId
     }
   }
 
-  public static deserialize(queryResult: any): Survey {
-    if (queryResult && queryResult._id && queryResult.answers && queryResult.userId && queryResult.experimentId) {
-      return new Survey(queryResult.answers, queryResult.userId, queryResult.experimentId, queryResult._id)
+  public static deserialize(queryResult: any): TextSurvey {
+    if (queryResult && queryResult._id && queryResult.answers && queryResult.userId) {
+      return new TextSurvey(queryResult.answers, queryResult.userId, queryResult._id)
     }
 
     throw new DeserializationError("The provided query result is not a valid survey object.");
