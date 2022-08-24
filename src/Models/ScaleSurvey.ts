@@ -4,23 +4,23 @@ import Savable from "../Common/Savable.interface";
 import validateGUID from "../Common/Util/GUIDValidator";
 import DeserializationError from "../Errors/DeserializationError";
 
-export interface ITextSurveyFactory {
-  create(answers: string[], userId: string, id?: string): TextSurvey;
+export interface IScaleSurveyFactory {
+  create(answers: number[], userId: string, id?: string): ScaleSurvey;
 } 
 
 @injectable()
-export class TextSurveyFactory implements ITextSurveyFactory {
-  public create = (answers: string[], userId: string, id?: string): TextSurvey => {
-    return new TextSurvey(answers, userId, id);
+export class ScaleSurveyFactory implements IScaleSurveyFactory {
+  public create = (answers: number[], userId: string, id?: string): ScaleSurvey => {
+    return new ScaleSurvey(answers, userId, id);
   }
 }
 
-export default class TextSurvey implements Savable {
+export default class ScaleSurvey implements Savable {
   private _id: string;
-  private answers: string[] = [];
+  private answers: number[] = [];
   private userId: string;
 
-  constructor(answers: string[], userId: string, id?: string) {
+  constructor(answers: number[], userId: string, id?: string) {
     if (id && validateGUID(id)) {
       this._id = id
     } else {
@@ -35,7 +35,7 @@ export default class TextSurvey implements Savable {
     return this._id;
   }
 
-  public getAnswers(): string[] {
+  public getAnswers(): number[] {
     return this.answers;
   }
 
@@ -44,8 +44,6 @@ export default class TextSurvey implements Savable {
   }
 
   public serialize(): { [key: string]: any; } {
-
-    console.log("SERIALIZE: ", this.answers, this.userId, this._id);
     return {
       _id: this._id,
       answers: this.answers,
@@ -53,9 +51,9 @@ export default class TextSurvey implements Savable {
     }
   }
 
-  public static deserialize(queryResult: any): TextSurvey {
+  public static deserialize(queryResult: any): ScaleSurvey {
     if (queryResult && queryResult._id && queryResult.answers && queryResult.userId) {
-      return new TextSurvey(queryResult.answers, queryResult.userId, queryResult._id)
+      return new ScaleSurvey(queryResult.answers, queryResult.userId, queryResult._id)
     }
 
     throw new DeserializationError("The provided query result is not a valid survey object.");

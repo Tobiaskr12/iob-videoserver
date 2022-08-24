@@ -4,17 +4,17 @@ import Logger from "../Common/Logger.interface";
 import { LogLevel } from "../Common/LogLevel.enum";
 import { DBCollections } from "../Common/DBCollections.enum";
 import IController from "./IController.interface";
-import TextSurvey from "../Models/TextSurvey";
+import ScaleSurvey from './../Models/ScaleSurvey';
 
 @injectable()
-export default class TextSurveyController implements IController<TextSurvey, string> {
+export default class ScaleSurveyController implements IController<ScaleSurvey, string> {
   constructor(
     @inject("DatabaseManager") private databaseManager: DatabaseManager,
     @inject("Logger") private logger: Logger
   ) { }
 
-  public async create(modelObject: TextSurvey): Promise<boolean> {
-    const createResult = await this.databaseManager.save(modelObject, DBCollections.TEXT_SURVEYS);
+  public async create(modelObject: ScaleSurvey): Promise<boolean> {
+    const createResult = await this.databaseManager.save(modelObject, DBCollections.SCALE_SURVEYS);
 
     if (createResult) {
       this.logger.logToBoth(
@@ -31,9 +31,9 @@ export default class TextSurveyController implements IController<TextSurvey, str
     return createResult;
   }
 
-  public async get(id: string): Promise<TextSurvey> {
+  public async get(id: string): Promise<ScaleSurvey> {
     try {
-      const returnSurvey = TextSurvey.deserialize(await this.databaseManager.get(id.toString(), DBCollections.TEXT_SURVEYS));
+      const returnSurvey = ScaleSurvey.deserialize(await this.databaseManager.get(id.toString(), DBCollections.SCALE_SURVEYS));
   
       if (returnSurvey) {
         this.logger.logToBoth(
@@ -55,9 +55,9 @@ export default class TextSurveyController implements IController<TextSurvey, str
     }
   }
 
-  public async getWithFilter(filter: any): Promise<TextSurvey[]> {
-    const serializedSurveys = await this.databaseManager.getWithFilter(filter, DBCollections.TEXT_SURVEYS);
-    const deserializedSurveys = serializedSurveys.map(u => TextSurvey.deserialize(u));
+  public async getWithFilter(filter: any): Promise<ScaleSurvey[]> {
+    const serializedSurveys = await this.databaseManager.getWithFilter(filter, DBCollections.SCALE_SURVEYS);
+    const deserializedSurveys = serializedSurveys.map(u => ScaleSurvey.deserialize(u));
 
     if (deserializedSurveys) {
       this.logger.logToBoth(
@@ -74,9 +74,9 @@ export default class TextSurveyController implements IController<TextSurvey, str
     return deserializedSurveys;
   }
 
-  public async getAll(): Promise<TextSurvey[]> {
-    const serializedSurveys = await this.databaseManager.getAll(DBCollections.TEXT_SURVEYS);
-    const deserializedSurveys = serializedSurveys.map(u => TextSurvey.deserialize(u));
+  public async getAll(): Promise<ScaleSurvey[]> {
+    const serializedSurveys = await this.databaseManager.getAll(DBCollections.SCALE_SURVEYS);
+    const deserializedSurveys = serializedSurveys.map(u => ScaleSurvey.deserialize(u));
 
     if (deserializedSurveys) {
       this.logger.logToBoth(
@@ -93,8 +93,8 @@ export default class TextSurveyController implements IController<TextSurvey, str
     return deserializedSurveys;
   }
 
-  public async update(oldModelObjectId: string, updatedModelObject: TextSurvey): Promise<boolean> {
-    const updateResult = await this.databaseManager.update(oldModelObjectId.toString(), updatedModelObject, DBCollections.TEXT_SURVEYS);
+  public async update(oldModelObjectId: string, updatedModelObject: ScaleSurvey): Promise<boolean> {
+    const updateResult = await this.databaseManager.update(oldModelObjectId.toString(), updatedModelObject, DBCollections.SCALE_SURVEYS);
 
     if (updateResult) {
       this.logger.logToBoth(
@@ -112,7 +112,7 @@ export default class TextSurveyController implements IController<TextSurvey, str
   }
 
   public async delete(modelObjectId: string): Promise<boolean> {
-    const deleteResult = await this.databaseManager.delete(modelObjectId.toString(), DBCollections.TEXT_SURVEYS);
+    const deleteResult = await this.databaseManager.delete(modelObjectId.toString(), DBCollections.SCALE_SURVEYS);
 
     if (deleteResult) {
       this.logger.logToBoth(

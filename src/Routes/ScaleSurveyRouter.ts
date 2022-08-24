@@ -3,16 +3,16 @@ import { container } from "tsyringe";
 import Logger from "../Common/Logger.interface";
 import { LogLevel } from "../Common/LogLevel.enum";
 import validateGUID from "../Common/Util/GUIDValidator";
+import ScaleSurveyController from "../Controllers/ScaleSurveyController";
 import InvalidRequestError from "../Errors/InvalidRequestError";
-import { TextSurveyFactory } from "../Models/TextSurvey";
-import TextSurveyController from '../Controllers/TextSurveyController';
+import { ScaleSurveyFactory } from "../Models/ScaleSurvey";
 
-const textSurveyRouter = express.Router();
+const scaleSurveyRouter = express.Router();
 const logger: Logger = container.resolve('Logger');
-const textSurveyController: TextSurveyController = container.resolve('TextSurveyController');
-const textSurveyFactory: TextSurveyFactory = container.resolve('TextSurveyFactory');
+const scaleSurveyController: ScaleSurveyController = container.resolve('ScaleSurveyController');
+const scaleSurveyFactory: ScaleSurveyFactory = container.resolve('ScaleSurveyFactory');
 
-textSurveyRouter.post('/', async (req: Request, res: Response) => {
+scaleSurveyRouter.post('/', async (req: Request, res: Response) => {
    try {
     if (!req.body.userId) throw new Error('The request did not contain a userId key');
     if (!validateGUID(req.body.userId)) throw new Error('The provided userId is not a valid GUID');
@@ -20,8 +20,8 @@ textSurveyRouter.post('/', async (req: Request, res: Response) => {
     if (req.body.answers.length != 4) throw new Error('The request did not contain exactly 7 answers');
     if (!req.body.experimentId) throw new Error('An experiment id was not provided');
 
-    const survey = textSurveyFactory.create(req.body.answers, req.body.userId, req.body.experimentId);
-    const isSurveySaved = await textSurveyController.create(survey);
+    const survey = scaleSurveyFactory.create(req.body.answers, req.body.userId, req.body.experimentId);
+    const isSurveySaved = await scaleSurveyController.create(survey);
 
     if (isSurveySaved) {
       return res.status(201).send("Survey created successfully");
@@ -50,4 +50,4 @@ textSurveyRouter.post('/', async (req: Request, res: Response) => {
 });
 
 
-export default textSurveyRouter;
+export default scaleSurveyRouter;

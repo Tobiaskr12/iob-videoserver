@@ -13,7 +13,9 @@ import LogController from "../Controllers/LogController";
 import LocationController from "../Controllers/LocationController";
 import EventController from "../Controllers/EventController";
 import TextSurveyController from '../Controllers/TextSurveyController';
-import { TextSurveyFactory } from "../Models/Survey";
+import { TextSurveyFactory } from "../Models/TextSurvey";
+import { ScaleSurveyFactory } from "../Models/ScaleSurvey";
+import ScaleSurveyController from "../Controllers/ScaleSurveyController";
 
 export const setupDI = () => {
   // Register util and wrappers
@@ -46,6 +48,9 @@ export const setupDI = () => {
   container.register("TextSurveyController", {
     useClass: TextSurveyController
   });
+  container.register("ScaleSurveyController", {
+    useClass: ScaleSurveyController
+  });
 
   // Register Factories
   container.register("VideoFactory", {
@@ -65,5 +70,8 @@ export const setupDI = () => {
   });
   container.register("TextSurveyFactory", {
     useClass: TextSurveyFactory
+  });
+  container.register("ScaleSurveyFactory", {
+    useClass: ScaleSurveyFactory
   });
 }
