@@ -35,9 +35,10 @@ export default class VideoController implements IController<Video, string> {
   }
 
   public get = async (id: string) => {
-    const downloadedVideo = await this.videoHostManager.download(id);
+    const serializedVideo = await this.databaseManager.get(id, DBCollections.VIDEOS);
+    const deserializedVideo = Video.deserialize(serializedVideo);
 
-    if (downloadedVideo) {
+    if (deserializedVideo) {
       this.logger.logToBoth(
         `Downloaded video ${id}`,
         LogLevel.INFO
@@ -49,7 +50,7 @@ export default class VideoController implements IController<Video, string> {
       );
     }
 
-    return downloadedVideo;
+    return deserializedVideo;
   }
 
   public async getWithFilter(filter: any): Promise<Video[]> {
@@ -96,20 +97,15 @@ export default class VideoController implements IController<Video, string> {
   }
 
   public delete = async (id: string) => {
-    const deleteResult = await this.videoHostManager.delete(id);
-
-    if (deleteResult) {
-      this.logger.logToBoth(
-        `Deleted video ${id}`,
-        LogLevel.INFO
-      );
-    } else {
-      this.logger.logToBoth(
-        `Failed to delete video ${id}`,
-        LogLevel.ERROR
-      );
+    for (let i = 1; i <= 5; i++) {
+      await this.videoHostManager.delete(id, i);
     }
 
-    return deleteResult;
+    this.logger.logToBoth(
+      `Deleted video ${id}`,
+      LogLevel.INFO
+    );
+
+    return true;
   };
 }

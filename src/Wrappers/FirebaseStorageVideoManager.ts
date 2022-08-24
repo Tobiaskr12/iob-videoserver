@@ -23,12 +23,12 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
 
   public async upload(video: Video): Promise<boolean> { 
     const id = video.getId();
-    fs.writeFileSync(`${id}.${video.getFileExtension()}`, video.getDataBuffer());
+    fs.writeFileSync(`${id}_experiment${video.getExperimentNumber()}.${video.getFileExtension()}`, video.getDataBuffer());
 
     const uploadResult = await this.bucket.upload(`${id}_experiment${video.getExperimentNumber()}.${video.getFileExtension()}`);
     
     if (uploadResult) {
-      fs.rmSync(`${id}.${video.getFileExtension()}`);
+      fs.rmSync(`${id}_experiment${video.getExperimentNumber()}.${video.getFileExtension()}`);
 
       return true;
     } else {

@@ -73,11 +73,11 @@ export default class User implements Savable {
     this.eventHistory.push(eventId);
   }
 
-  public addVideo(videoIds: string) {
-    if (this.videoIds) {
-      this.videoIds.push(videoIds);
+  public addVideo(videoId: string) {
+    if (Array.isArray(this.videoIds)) {
+      this.videoIds.push(videoId);
     } else {
-      this.videoIds = [videoIds];
+      this.videoIds = [videoId];
     }
   }
 
@@ -142,7 +142,7 @@ export default class User implements Savable {
       _id: this._id.toString(),
       locationHistory: this.locationHistory.map(locationId => locationId.toString()),
       eventHistory: this.eventHistory.map(eventId => eventId.toString()),
-      videoIds: this.videoIds?.toString(),
+      videoIds: this.videoIds,
       connectedTime: this.connectedTime,
       disconnectedTime: this.disconnectedTime
     };

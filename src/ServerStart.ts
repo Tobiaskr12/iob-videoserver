@@ -34,7 +34,7 @@ app.use('/events', eventRouter);
 app.use('/locations', locationRouter);
 app.use('/adaptions', adaptionRouter);
 app.use('/text-survey', textSurveyRouter);
-app.use('scale-survey', scaleSurveyRouter);
+app.use('/scale-survey', scaleSurveyRouter);
 
 MongoClient.connect(getDbConnectionString(), async (err, client) => {
     if (err || !client) {
