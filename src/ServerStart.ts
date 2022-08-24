@@ -32,7 +32,7 @@ app.use('/users', userRouter);
 app.use('/events', eventRouter);
 app.use('/locations', locationRouter);
 app.use('/adaptions', adaptionRouter);
-app.use('/survey', textSurveyRouter);
+app.use('/text-survey', textSurveyRouter);
 
 MongoClient.connect(getDbConnectionString(), async (err, client) => {
     if (err || !client) {
