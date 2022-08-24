@@ -48,8 +48,23 @@ export default class User implements Savable {
   private videoIds?: string[];
   private destination: 'A' | 'B' | 'C' | 'D';
   private location: UserLocation;
+  private experimentConclusionEmotions: {
+    expression: string;
+    probability: number;
+  }[][] = [];
 
-  constructor(connectedTime: number, id?: string, locationHistory?: string[], eventHistory?: string[], videoIds?: string[], disconnectedTime?: number) {
+  constructor(
+    connectedTime: number,
+    id?: string,
+    locationHistory?: string[], 
+    eventHistory?: string[],
+    videoIds?: string[],
+    disconnectedTime?: number,
+    experimentConclusionEmotion?: {
+      expression: string;
+      probability: number;
+    }[][]
+  ) {
     if (id && validateGUID(id)) {
       this._id = id
     } else {
@@ -63,6 +78,7 @@ export default class User implements Savable {
     this.videoIds = videoIds || undefined;
     this.destination = getRandomDestination();
     this.location = undefined;
+    this.experimentConclusionEmotions = experimentConclusionEmotion || [];
   }
 
   public addLocation(locationId: string) {
@@ -79,6 +95,13 @@ export default class User implements Savable {
     } else {
       this.videoIds = [videoId];
     }
+  }
+
+  public addExperimentConclusionEmotions(emotionArray: {
+    expression: string;
+    probability: number;
+  }[]) {
+    this.experimentConclusionEmotions.push(emotionArray);
   }
 
   public getId(): string {
@@ -103,6 +126,13 @@ export default class User implements Savable {
 
   public getDisconnectedTime(): number | undefined {
     return this.disconnectedTime;
+  }
+
+  public getExperimentConclusionEmotions(): {
+    expression: string;
+    probability: number;
+  }[][] {
+    return this.experimentConclusionEmotions;
   }
 
   public getConnectionDuration(): number {
@@ -144,7 +174,8 @@ export default class User implements Savable {
       eventHistory: this.eventHistory.map(eventId => eventId.toString()),
       videoIds: this.videoIds,
       connectedTime: this.connectedTime,
-      disconnectedTime: this.disconnectedTime
+      disconnectedTime: this.disconnectedTime,
+      experimentConclusionEmotions: this.experimentConclusionEmotions
     };
   }
 
@@ -161,9 +192,10 @@ export default class User implements Savable {
         queryResult.eventHistory ? queryResult.eventHistory.map((eventId: string) => Guid.parse(eventId)) : [],
         queryResult.videoIds ? queryResult.videoIds : undefined,
         queryResult.disconnectedTime ? queryResult.disconnectedTime : undefined,
+        queryResult.experimentConclusionEmotions ? queryResult.experimentConclusionEmotions : undefined
       );
     }
 
-    throw new DeserializationError("The provided query result is not a valid event.");
+    throw new DeserializationError("The provided query result is not a valid user.");
   }
 }

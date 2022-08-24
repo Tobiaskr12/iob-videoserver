@@ -222,6 +222,44 @@ userRouter.post('/:user_id/locations', async (req: Request, res: Response) => {
   }
 });
 
+// Add experiment conclusion emotions to user
+userRouter.post('/:user_id/emotions', async (req: Request, res: Response) => {
+  try {
+    if (!req.params.user_id) throw new InvalidRequestError('The required parameter "user_id" is missing');
+    if (!validateGUID(req.params.user_id)) throw new InvalidRequestError('The parameter "user_id" is not a valid GUID');
+    if (!(Array.isArray(req.body.emotions))) throw new InvalidRequestError('The required parameter "emotions" is not an array');
+    if (req.body.emotions.length === 0) throw new InvalidRequestError('The parameter "emotions" is empty');
+
+    const user = await userController.get(req.params.user_id);
+    if (!user) throw new Error('User not found');
+
+    user.addExperimentConclusionEmotions(req.body.emotions);
+
+    const updateResult = await userController.update(user.getId(), user);
+    if (!updateResult) throw new Error('Failed to update user');
+
+    return res.status(200).send();
+  } catch (error) {
+    if (error instanceof InvalidRequestError) {
+      logger.logToBoth(
+        `UserRoutes POST (/:user_id/emotions) - Invalid request: ${error.message}`,
+        LogLevel.INFO,
+        error.stack
+      );
+
+      return res.status(400).send('Request failed: ' + error.message);
+    } else if (error instanceof Error) {
+      logger.logToBoth(
+        `UserRoutes POST (/:user_id/emotions) - Internal server error: ${error.message}`,
+        LogLevel.ERROR,
+        error.stack
+      );
+    }
+
+    return res.status(500).send();
+  }
+});
+
 // Add event to user
 userRouter.post('/:user_id/events', async (req: Request, res: Response) => {
   try {
