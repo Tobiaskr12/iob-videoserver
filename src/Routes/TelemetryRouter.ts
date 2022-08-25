@@ -14,11 +14,10 @@ const telemetryFactory: TelemetryFactory = container.resolve('TelemetryFactory')
 
 telemetryRouter.post('/', async (req: Request, res: Response) => {
    try {
-    //if (!Array.isArray(req.body.results)) throw new Error('The request did not contain any results');
-    //if (req.body.results.length != 3) throw new Error('The request did not contain exactly 3 results');
+    if (!req.body.results) throw new Error('The request did not contain any results');
+    if (Object.keys(req.body.results).length != 3) throw new Error('The request did not contain exactly 3 results');
     //if (!req.body.experimentId) throw new Error('An experiment id was not provided');
     //
-    console.log("results werw postsed " + JSON.stringify(req.body))
 
     const telemetryData = telemetryFactory.create(req.body.results.avgQLearnTime, req.body.results.avgComputationTime, req.body.results.avgEmotionAge);
     const isTelemetrySaved = await telemetryController.create(telemetryData);
