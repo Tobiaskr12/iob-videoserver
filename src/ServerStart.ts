@@ -18,6 +18,7 @@ import locationRouter from './Routes/LocationRoutes';
 import { SocketService } from './Services/SocketService';
 import adaptionRouter from './Routes/AdaptionRoutes';
 import surveyRouter from './Routes/SurveyRouter';
+import telemetryRouter from './Routes/TelemetryRouter'
 
 const server = http.createServer(app);
 const port = process.env.PORT;
@@ -33,6 +34,7 @@ app.use('/events', eventRouter);
 app.use('/locations', locationRouter);
 app.use('/adaptions', adaptionRouter);
 app.use('/survey', surveyRouter);
+app.use('/telemetry', telemetryRouter);
 
 MongoClient.connect(getDbConnectionString(), async (err, client) => {
     if (err || !client) {

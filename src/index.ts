@@ -9,7 +9,7 @@ export const app = express()
 
 firebaseAdmin.initializeApp({// @ts-ignore
   credential: firebaseAdmin.credential.applicationDefault(),
-  storageBucket: 'gs://siob-test.appspot.com/'
+  storageBucket: 'gs://iob-test.appspot.com/'
 });
 
 app.use(fileUpload());
