@@ -5,13 +5,13 @@ import validateGUID from '../Common/Util/GUIDValidator';
 import DeserializationError from '../Errors/DeserializationError';
 
 export interface IUserFactory {
-  create(connectedTime: number, id?: string, locationHistory?: string[], eventHistory?: string[], videoId?: string, disconnectedTime?: number): User;
+  create(connectedTime: number, id?: string, locationHistory?: string[], eventHistory?: string[], videoIds?: string[], disconnectedTime?: number): User;
 }
 
 @injectable()
 export class UserFactory implements IUserFactory { 
-  public create = (connectedTime: number, id?: string, locationHistory?: string[], eventHistory?: string[], videoId?: string, disconnectedTime?: number): User => {
-    return new User(connectedTime, id, locationHistory, eventHistory, videoId, disconnectedTime);
+  public create = (connectedTime: number, id?: string, locationHistory?: string[], eventHistory?: string[], videoIds?: string[], disconnectedTime?: number): User => {
+    return new User(connectedTime, id, locationHistory, eventHistory, videoIds, disconnectedTime);
   }
 }
 
@@ -45,11 +45,26 @@ export default class User implements Savable {
   private eventHistory: string[];
   private connectedTime: number;
   private disconnectedTime?: number;
-  private videoId?: string;
+  private videoIds?: string[];
   private destination: 'A' | 'B' | 'C' | 'D';
   private location: UserLocation;
+  private experimentConclusionEmotions: {
+    expression: string;
+    probability: number;
+  }[][] = [];
 
-  constructor(connectedTime: number, id?: string, locationHistory?: string[], eventHistory?: string[], videoId?: string, disconnectedTime?: number) {
+  constructor(
+    connectedTime: number,
+    id?: string,
+    locationHistory?: string[], 
+    eventHistory?: string[],
+    videoIds?: string[],
+    disconnectedTime?: number,
+    experimentConclusionEmotion?: {
+      expression: string;
+      probability: number;
+    }[][]
+  ) {
     if (id && validateGUID(id)) {
       this._id = id
     } else {
@@ -60,9 +75,10 @@ export default class User implements Savable {
     this.eventHistory = eventHistory || [];
     this.connectedTime = connectedTime;
     this.disconnectedTime = disconnectedTime || undefined;
-    this.videoId = videoId || undefined;
+    this.videoIds = videoIds || undefined;
     this.destination = getRandomDestination();
     this.location = undefined;
+    this.experimentConclusionEmotions = experimentConclusionEmotion || [];
   }
 
   public addLocation(locationId: string) {
@@ -74,7 +90,18 @@ export default class User implements Savable {
   }
 
   public addVideo(videoId: string) {
-    this.videoId = videoId;
+    if (Array.isArray(this.videoIds)) {
+      this.videoIds.push(videoId);
+    } else {
+      this.videoIds = [videoId];
+    }
+  }
+
+  public addExperimentConclusionEmotions(emotionArray: {
+    expression: string;
+    probability: number;
+  }[]) {
+    this.experimentConclusionEmotions.push(emotionArray);
   }
 
   public getId(): string {
@@ -89,8 +116,8 @@ export default class User implements Savable {
     return this.eventHistory;
   }
 
-  public getVideoId(): string | undefined {
-    return this.videoId;
+  public getVideoId(): string[] | undefined {
+    return this.videoIds;
   }
 
   public getConnectedTime(): number {
@@ -99,6 +126,13 @@ export default class User implements Savable {
 
   public getDisconnectedTime(): number | undefined {
     return this.disconnectedTime;
+  }
+
+  public getExperimentConclusionEmotions(): {
+    expression: string;
+    probability: number;
+  }[][] {
+    return this.experimentConclusionEmotions;
   }
 
   public getConnectionDuration(): number {
@@ -117,8 +151,8 @@ export default class User implements Savable {
     return this.location;
   }
 
-  public setVideoId(videoId: string) {
-    this.videoId = videoId;
+  public setVideoIds(videoIds: string[]) {
+    this.videoIds = videoIds;
   }
 
   public setDisconnectedTime(disconnectedTime: number) {
@@ -138,9 +172,10 @@ export default class User implements Savable {
       _id: this._id.toString(),
       locationHistory: this.locationHistory.map(locationId => locationId.toString()),
       eventHistory: this.eventHistory.map(eventId => eventId.toString()),
-      videoId: this.videoId?.toString(),
+      videoIds: this.videoIds,
       connectedTime: this.connectedTime,
-      disconnectedTime: this.disconnectedTime
+      disconnectedTime: this.disconnectedTime,
+      experimentConclusionEmotions: this.experimentConclusionEmotions
     };
   }
 
@@ -155,11 +190,12 @@ export default class User implements Savable {
         queryResult._id,
         queryResult.locationHistory ? queryResult.locationHistory.map((locationId: string) => Guid.parse(locationId)) : [],
         queryResult.eventHistory ? queryResult.eventHistory.map((eventId: string) => Guid.parse(eventId)) : [],
-        queryResult.videoId ? queryResult.videoId : undefined,
+        queryResult.videoIds ? queryResult.videoIds : undefined,
         queryResult.disconnectedTime ? queryResult.disconnectedTime : undefined,
+        queryResult.experimentConclusionEmotions ? queryResult.experimentConclusionEmotions : undefined
       );
     }
 
-    throw new DeserializationError("The provided query result is not a valid event.");
+    throw new DeserializationError("The provided query result is not a valid user.");
   }
 }

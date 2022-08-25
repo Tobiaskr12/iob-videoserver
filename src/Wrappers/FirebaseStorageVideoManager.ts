@@ -23,12 +23,12 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
 
   public async upload(video: Video): Promise<boolean> { 
     const id = video.getId();
-    fs.writeFileSync(`${id}.${video.getFileExtension()}`, video.getDataBuffer());
+    fs.writeFileSync(`${id}_experiment${video.getExperimentNumber()}.${video.getFileExtension()}`, video.getDataBuffer());
 
-    const uploadResult = await this.bucket.upload(`${id}.${video.getFileExtension()}`);
+    const uploadResult = await this.bucket.upload(`${id}_experiment${video.getExperimentNumber()}.${video.getFileExtension()}`);
     
     if (uploadResult) {
-      fs.rmSync(`${id}.${video.getFileExtension()}`);
+      fs.rmSync(`${id}_experiment${video.getExperimentNumber()}.${video.getFileExtension()}`);
 
       return true;
     } else {
@@ -36,11 +36,11 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     }
   }
 
-  public async download(id: string): Promise<Video> {    
+  public async download(id: string, experimentNumber: number): Promise<Video> {    
     const bucketFiles = await this.bucket.getFiles();
     if (!bucketFiles) throw new Error('An error occured while retrieving the files from the bucket');
 
-    const videoFile = await this.findFileInBucketWithAllPossibleExtensions(id);
+    const videoFile = await this.findFileInBucketWithAllPossibleExtensions(`${experimentNumber}_experiment${experimentNumber}`);
     if (videoFile) { 
       this.logger.logToBoth(
         `Downloading video with id ${id} from the bucket`,
@@ -85,11 +85,11 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
     }
   }
 
-  public async delete(id: string): Promise<boolean> { 
+  public async delete(id: string, experimentNumber: number): Promise<boolean> { 
     const bucketFiles = await this.bucket.getFiles();
     if (!bucketFiles) throw new Error('An error occured while retrieving the files from the bucket');
 
-    const videoFile = await this.findFileInBucketWithAllPossibleExtensions(id);
+    const videoFile = await this.findFileInBucketWithAllPossibleExtensions(`${experimentNumber}_experiment${experimentNumber}`);
 
     if (videoFile) { 
       const response = await this.bucket.file(videoFile.metadata.name).delete();
@@ -148,6 +148,7 @@ export default class FirebaseStorageVideoManager implements VideoHostManager {
           fileExtension,
           videoData.getRecordingStartedTime(),
           videoData.getRecordingEndedTime(),
+          videoData.getExperimentNumber(),
           videoData.getId()
         );
 

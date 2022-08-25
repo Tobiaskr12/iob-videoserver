@@ -31,8 +31,9 @@ videoRouter.post('/', async (req: Request, res: Response) => {
     if (!(req.body.file_extension === 'webm')) throw new InvalidRequestError('The provided video file format is not supported');
     if (!req.body.recordingStartedTime) throw new InvalidRequestError('The request did not contain a recordingStartedTime key in the body');
     if (!req.body.recordingEndedTime) throw new InvalidRequestError('The request did not contain a recordingEndedTime key in the body');
+    if (!req.body.experimentNumber) throw new InvalidRequestError('The request did not contain an experimentNumber');
 
-    const requestVideo = videoFactory.create(req.files.videoFile.data, req.body.file_extension, +req.body.recordingStartedTime, +req.body.recordingEndedTime);
+    const requestVideo = videoFactory.create(req.files.videoFile.data, req.body.file_extension, +req.body.recordingStartedTime, +req.body.recordingEndedTime, +req.body.experimentNumber);
     const isVideoUploaded = await videoController.create(requestVideo);
 
     if (isVideoUploaded) {
@@ -105,38 +106,38 @@ videoRouter.get('/all', async (_req: Request, res: Response) => {
  * The request returns a buffer containing the video file data.
  */
 videoRouter.get('/:id', async (req: Request, res: Response) => {
-try {
-  if (!req.params.id) throw new InvalidRequestError('The request did not contain the query parameter \'id\'');
-  if (!(typeof req.params.id === "string")) throw new InvalidRequestError('The query parameter \'id\' must be a string');
-  if (!validateGUID(req.params.id)) throw new InvalidRequestError('The query parameter \'id\' is not a valid GUID');
+  try {
+    if (!req.params.id) throw new InvalidRequestError('The request did not contain the query parameter \'id\'');
+    if (!(typeof req.params.id === "string")) throw new InvalidRequestError('The query parameter \'id\' must be a string');
+    if (!validateGUID(req.params.id)) throw new InvalidRequestError('The query parameter \'id\' is not a valid GUID');
 
-  const video = await videoController.get(Guid.parse(req.params.id));
+    const video = await videoController.get(Guid.parse(req.params.id));
 
-  return res.status(200).send({
-    _id: video.getId(),
-    file_extension: video.getFileExtension(),
-    recordingStartedTime: video.getRecordingStartedTime(),
-    recordingEndedTime: video.getRecordingEndedTime(),
-  })
-} catch (error) {
-  if (error instanceof InvalidRequestError || error instanceof SemanticError) { 
-    logger.logToBoth(
-      `VideoRoutes GET (/) - Invalid request: ${error.message}`,
-      LogLevel.INFO,
-      error.stack
-    );
+    return res.status(200).send({
+      _id: video.getId(),
+      file_extension: video.getFileExtension(),
+      recordingStartedTime: video.getRecordingStartedTime(),
+      recordingEndedTime: video.getRecordingEndedTime(),
+    })
+  } catch (error) {
+    if (error instanceof InvalidRequestError || error instanceof SemanticError) { 
+      logger.logToBoth(
+        `VideoRoutes GET (/) - Invalid request: ${error.message}`,
+        LogLevel.INFO,
+        error.stack
+      );
 
-    return res.status(400).send('Request failed: ' + error.message);
-  } else if (error instanceof Error) { 
-    logger.logToBoth(
-      `VideoRoutes GET (/) - Internal server error: ${error.message}`,
-      LogLevel.ERROR,
-      error.stack
-    );
+      return res.status(400).send('Request failed: ' + error.message);
+    } else if (error instanceof Error) { 
+      logger.logToBoth(
+        `VideoRoutes GET (/) - Internal server error: ${error.message}`,
+        LogLevel.ERROR,
+        error.stack
+      );
+    }
+    
+    return res.sendStatus(500);
   }
-  
-  return res.sendStatus(500);
-}
 });
 
 /**

@@ -5,13 +5,13 @@ import validateGUID from '../Common/Util/GUIDValidator';
 import DeserializationError from '../Errors/DeserializationError';
 
 export interface IVideoFactory {
-  create(data: Buffer, file_extension: 'webm', recordingStartedTime: number, recordingEndedTime: number, id?: string): Video
+  create(data: Buffer, file_extension: 'webm', recordingStartedTime: number, recordingEndedTime: number, experimentNumber: number, id?: string): Video
 }
 
 @injectable()
 export class VideoFactory implements IVideoFactory {
-  public create = (data: Buffer, file_extension: 'webm', recordingStartedTime: number, recordingEndedTime: number,  id?: string): Video => {
-    return new Video(file_extension, data, recordingStartedTime, recordingEndedTime, id);
+  public create = (data: Buffer, file_extension: 'webm', recordingStartedTime: number, recordingEndedTime: number, experimentNumber: number, id?: string): Video => {
+    return new Video(file_extension, data, recordingStartedTime, recordingEndedTime, experimentNumber, id);
   }
 } 
 
@@ -27,8 +27,9 @@ export default class Video implements Savable {
   private file_extension: 'webm';
   private recordingStartedTime: number;
   private recordingEndedTime: number;
+  private experimentNumber: number;
   
-  constructor(file_extension: 'webm', dataBuffer: Buffer, recordingStartedTime: number, recordingEndedTime: number, id?: string) { 
+  constructor(file_extension: 'webm', dataBuffer: Buffer, recordingStartedTime: number, recordingEndedTime: number, experimentNumber: number, id?: string) { 
     if (id && validateGUID(id)) {
       this._id = id
     } else {
@@ -38,6 +39,7 @@ export default class Video implements Savable {
     this.dataBuffer = dataBuffer;
     this.recordingStartedTime = recordingStartedTime;
     this.recordingEndedTime = recordingEndedTime;
+    this.experimentNumber = experimentNumber;
   }
 
   public getId() {
@@ -60,22 +62,28 @@ export default class Video implements Savable {
     return this.recordingEndedTime;
   }
 
+  public getExperimentNumber() {
+    return this.experimentNumber;
+  }
+
   public serialize() {
     return {
       _id: this._id.toString(),
       file_extension: this.file_extension,
       recordingStartedTime: this.recordingStartedTime,
-      recordingEndedTime: this.recordingEndedTime
+      recordingEndedTime: this.recordingEndedTime,
+      experimentNumber: this.experimentNumber
     };
   }
 
   public static deserialize(queryResult: any): Video {
-    if (queryResult && queryResult._id && queryResult.file_extension && queryResult.recordingStartedTime && queryResult.recordingEndedTime) { 
+    if (queryResult && queryResult._id && queryResult.file_extension && queryResult.recordingStartedTime && queryResult.recordingEndedTime && queryResult.experimentNumber) { 
       return new Video(
         queryResult.file_extension,
         Buffer.alloc(0),
         queryResult.recordingStartedTime,
         queryResult.recordingEndedTime,
+        queryResult.experimentNumber,
         queryResult._id
       )
     }

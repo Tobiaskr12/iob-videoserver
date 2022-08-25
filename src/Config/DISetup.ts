@@ -12,10 +12,12 @@ import UserController from "../Controllers/UserController";
 import LogController from "../Controllers/LogController";
 import LocationController from "../Controllers/LocationController";
 import EventController from "../Controllers/EventController";
-import SurveyController from './../Controllers/SurveyController';
-import { SurveyFactory } from "../Models/Survey";
 import TelemetryController from './../Controllers/TelemetryController'
 import { TelemetryFactory } from '../Models/Telemetry'
+import TextSurveyController from '../Controllers/TextSurveyController';
+import { TextSurveyFactory } from "../Models/TextSurvey";
+import { ScaleSurveyFactory } from "../Models/ScaleSurvey";
+import ScaleSurveyController from "../Controllers/ScaleSurveyController";
 
 export const setupDI = () => {
   // Register util and wrappers
@@ -45,8 +47,11 @@ export const setupDI = () => {
   container.register("UserController", {
     useClass: UserController
   });
-  container.register("SurveyController", {
-    useClass: SurveyController
+  container.register("TextSurveyController", {
+    useClass: TextSurveyController
+  });
+  container.register("ScaleSurveyController", {
+    useClass: ScaleSurveyController
   });
   container.register("TelemetryController", {
     useClass: TelemetryController
@@ -68,8 +73,11 @@ export const setupDI = () => {
   container.register("UserFactory", { 
     useClass: UserFactory
   });
-  container.register("SurveyFactory", {
-    useClass: SurveyFactory
+  container.register("TextSurveyFactory", {
+    useClass: TextSurveyFactory
+  });
+  container.register("ScaleSurveyFactory", {
+    useClass: ScaleSurveyFactory
   });
   container.register("TelemetryFactory", {
     useClass: TelemetryFactory
