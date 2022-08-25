@@ -6,11 +6,12 @@ import bodyParser from 'body-parser';
 
 export const app = express()
 
-firebaseAdmin.initializeApp({// @ts-ignore
+const firebaseConfig = JSON.parse(process.env.FIREBASE_CREDENTIALS as string);
+
+firebaseAdmin.initializeApp({ // @ts-ignore
   credential: firebaseAdmin.credential.cert(firebaseConfig),
   storageBucket: 'gs://emergency-experiment.appspot.com'
 });
-
 
 app.use(fileUpload());
 app.use(bodyParser.json());

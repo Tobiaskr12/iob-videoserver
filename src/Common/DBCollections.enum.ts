@@ -5,5 +5,6 @@ export enum DBCollections {
   LOCATIONS = "locations",
   VIDEOS = "videos",
   TEXT_SURVEYS = "text-surveys",
-  SCALE_SURVEYS = "scale-surveys"
+  SCALE_SURVEYS = "scale-surveys",
+  TELEMETRY = "telemetry"
 }

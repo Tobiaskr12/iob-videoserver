@@ -51,12 +51,11 @@ export default class Telemetry implements Savable {
 
   public serialize(): { [key: string]: any; } {
 
-    console.log("SERIALIZE: ", this.avgQLearnTime, this.avgComputationTime, this._id);
     return {
       _id: this._id,
-      answers: this.avgQLearnTime,
-      userId: this.avgComputationTime,
-      experimentId: this.avgEmotionAge
+      avgQLearnTime: this.avgQLearnTime,
+      avgComputationTime: this.avgComputationTime,
+      avgEmotionAge: this.avgEmotionAge
     }
   }
 

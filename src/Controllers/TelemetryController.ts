@@ -14,7 +14,7 @@ export default class TelemetryController implements IController<Telemetry, strin
   ) { }
 
   public async create(modelObject: Telemetry): Promise<boolean> {
-    const createResult = await this.databaseManager.save(modelObject, DBCollections.SURVEYS);
+    const createResult = await this.databaseManager.save(modelObject, DBCollections.TELEMETRY);
 
     if (createResult) {
       this.logger.logToBoth(
@@ -33,7 +33,7 @@ export default class TelemetryController implements IController<Telemetry, strin
 
   public async get(id: string): Promise<Telemetry> {
     try {
-      const returnTelemetry = Telemetry.deserialize(await this.databaseManager.get(id.toString(), DBCollections.SURVEYS));
+      const returnTelemetry = Telemetry.deserialize(await this.databaseManager.get(id.toString(), DBCollections.TELEMETRY));
   
       if (returnTelemetry) {
         this.logger.logToBoth(
@@ -56,7 +56,7 @@ export default class TelemetryController implements IController<Telemetry, strin
   }
 
   public async getWithFilter(filter: any): Promise<Telemetry[]> {
-    const serializedTelemetrys = await this.databaseManager.getWithFilter(filter, DBCollections.SURVEYS);
+    const serializedTelemetrys = await this.databaseManager.getWithFilter(filter, DBCollections.TELEMETRY);
     const deserializedTelemetrys = serializedTelemetrys.map(u => Telemetry.deserialize(u));
 
     if (deserializedTelemetrys) {
@@ -75,7 +75,7 @@ export default class TelemetryController implements IController<Telemetry, strin
   }
 
   public async getAll(): Promise<Telemetry[]> {
-    const serializedTelemetrys = await this.databaseManager.getAll(DBCollections.SURVEYS);
+    const serializedTelemetrys = await this.databaseManager.getAll(DBCollections.TELEMETRY);
     const deserializedTelemetrys = serializedTelemetrys.map(u => Telemetry.deserialize(u));
 
     if (deserializedTelemetrys) {
@@ -94,7 +94,7 @@ export default class TelemetryController implements IController<Telemetry, strin
   }
 
   public async update(oldModelObjectId: string, updatedModelObject: Telemetry): Promise<boolean> {
-    const updateResult = await this.databaseManager.update(oldModelObjectId.toString(), updatedModelObject, DBCollections.SURVEYS);
+    const updateResult = await this.databaseManager.update(oldModelObjectId.toString(), updatedModelObject, DBCollections.TELEMETRY);
 
     if (updateResult) {
       this.logger.logToBoth(
@@ -112,7 +112,7 @@ export default class TelemetryController implements IController<Telemetry, strin
   }
 
   public async delete(modelObjectId: string): Promise<boolean> {
-    const deleteResult = await this.databaseManager.delete(modelObjectId.toString(), DBCollections.SURVEYS);
+    const deleteResult = await this.databaseManager.delete(modelObjectId.toString(), DBCollections.TELEMETRY);
 
     if (deleteResult) {
       this.logger.logToBoth(
